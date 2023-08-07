@@ -1,0 +1,82 @@
+!
+hostname R1
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+interface Loopback0
+ no shutdown
+ ip address 192.168.1.1 255.255.255.255
+ ip ospf 1 area 0
+!
+interface Ethernet0/0
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/1
+ no shutdown
+ no ip address
+!
+interface Ethernet0/1.15
+ no shutdown
+ encapsulation dot1Q 15
+ ip address 10.1.5.1 255.255.255.0
+ ip ospf network point-to-point
+ ip ospf prefix-suppression
+ ip ospf 1 area 1
+!
+interface Ethernet0/1.1234
+ no shutdown
+ encapsulation dot1Q 1234
+ ip address 10.12.34.1 255.255.255.0
+ ip ospf network broadcast
+ ip ospf prefix-suppression
+ ip ospf 1 area 0
+ ipv6 address FC00::10:12:34:1/112
+!
+interface Ethernet0/2
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no shutdown
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 192.168.1.1
+ area 1 stub
+!
+router bgp 65512
+ bgp log-neighbor-changes
+ neighbor 192.168.4.4 remote-as 65512
+ neighbor 192.168.4.4 update-source Loopback0
+ neighbor FC00::10:12:34:4 remote-as 65512
+ neighbor FC00::10:12:34:4 update-source Ethernet0/1.1234
+ !
+ address-family ipv4
+  no neighbor 192.168.4.4 activate
+  no neighbor FC00::10:12:34:4 activate
+ exit-address-family
+ !
+ address-family ipv6
+  neighbor FC00::10:12:34:4 activate
+ exit-address-family
+!

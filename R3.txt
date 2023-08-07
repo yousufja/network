@@ -1,0 +1,151 @@
+!
+hostname R3
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+crypto isakmp policy 10
+ encr aes 192
+ hash sha256
+ authentication pre-share
+ group 14
+crypto isakmp key cisco address ipv6 ::/0
+!
+!
+crypto ipsec transform-set ESP_AES_SHA256_HMAC esp-aes 
+ mode transport
+!
+crypto ipsec profile IPSEC_PROFILE
+ set transform-set ESP_AES_SHA256_HMAC 
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no shutdown
+ ip address 192.168.3.3 255.255.255.255
+ ip ospf 1 area 0
+ ipv6 address 192:168:3:3::/128
+!
+interface Tunnel0
+ no shutdown
+ ip address 172.16.1.3 255.255.255.0
+ ip mtu 1400
+ ip nhrp authentication cisco
+ ip nhrp map 172.16.1.29 192:168:29:29::
+ ip nhrp map multicast 192:168:29:29::
+ ip nhrp network-id 1
+ ip nhrp nhs 172.16.1.29
+ ip nhrp shortcut
+ ip tcp adjust-mss 1360
+ ip ospf network broadcast
+ ip ospf priority 0
+ ip ospf 1 area 0
+ tunnel source Loopback0
+ tunnel mode gre multipoint ipv6
+ tunnel key 1000
+ tunnel protection ipsec profile IPSEC_PROFILE
+!
+interface Ethernet0/0
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/1
+ no shutdown
+ no ip address
+!
+interface Ethernet0/1.39
+ no shutdown
+ encapsulation dot1Q 39
+ ip address 10.3.9.3 255.255.255.0
+ ip ospf network point-to-point
+ ip ospf prefix-suppression
+ ip ospf 1 area 3
+!
+interface Ethernet0/1.333
+ no shutdown
+ encapsulation dot1Q 333
+ ipv6 address FC00::10:3:33:3/112
+!
+interface Ethernet0/1.1234
+ no shutdown
+ encapsulation dot1Q 1234
+ ip address 10.12.34.3 255.255.255.0
+ ip ospf prefix-suppression
+ ip ospf 1 area 0
+ ipv6 address FC00::10:12:34:3/112
+!
+interface Ethernet0/2
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no shutdown
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 192.168.3.3
+ area 3 nssa default-information-originate
+!
+router bgp 65512
+ bgp router-id 192.168.3.3
+ bgp log-neighbor-changes
+ neighbor FC00::10:3:33:33 remote-as 65523
+ neighbor FC00::10:12:34:4 remote-as 65512
+ neighbor FC00::10:12:34:4 update-source Ethernet0/1.1234
+ !
+ address-family ipv4
+  no neighbor FC00::10:3:33:33 activate
+  no neighbor FC00::10:12:34:4 activate
+ exit-address-family
+ !
+ address-family ipv6
+  network 192:168:3:3::/128
+  neighbor FC00::10:3:33:33 activate
+  neighbor FC00::10:3:33:33 allowas-in 10
+  neighbor FC00::10:12:34:4 activate
+  neighbor FC00::10:12:34:4 next-hop-self
+ exit-address-family
+!

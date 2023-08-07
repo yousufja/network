@@ -1,0 +1,143 @@
+
+!
+hostname R32
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+mpls label range 3200 3299
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no shutdown
+ ip address 192.168.32.32 255.255.255.255
+ ip ospf 1 area 0
+!
+interface Tunnel64
+ no shutdown
+ no ip address
+ no ip redirects
+ ipv6 address FC00::10:20:41:32/112
+ ipv6 nhrp authentication cisco
+ ipv6 nhrp map FC00::10:20:41:41/128 192.168.41.41
+ ipv6 nhrp map multicast 192.168.41.41
+ ipv6 nhrp network-id 1
+ ipv6 nhrp nhs FC00::10:20:41:41
+ ipv6 nhrp shortcut
+ tunnel source Loopback0
+ tunnel mode gre multipoint
+ tunnel key 1000
+!
+interface Ethernet0/0
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/1
+ no shutdown
+ no ip address
+!
+interface Ethernet0/1.2432
+ no shutdown
+ encapsulation dot1Q 2432
+ ip address 10.24.32.32 255.255.255.0
+ ip ospf prefix-suppression
+ ip ospf 1 area 0
+!
+interface Ethernet0/1.2732
+ no shutdown
+ encapsulation dot1Q 2732
+ ip address 10.27.32.32 255.255.255.0
+ ip ospf prefix-suppression
+ ip ospf 1 area 0
+!
+interface Ethernet0/1.2832
+ no shutdown
+ encapsulation dot1Q 2832
+ ip address 10.28.32.32 255.255.255.0
+ ip ospf network point-to-point
+ ip ospf prefix-suppression
+ ip ospf 1 area 0
+!
+interface Ethernet0/1.2932
+ no shutdown
+ encapsulation dot1Q 2932
+ ipv6 address FC00::10:29:32:32/112
+!
+interface Ethernet0/2
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no shutdown
+ no ip address
+ shutdown
+!
+router ospf 1
+ mpls ldp sync
+ mpls ldp autoconfig
+!
+router bgp 65522
+ bgp router-id 192.168.32.32
+ bgp log-neighbor-changes
+ neighbor FC00::10:20:41:41 remote-as 65522
+ neighbor FC00::10:20:41:41 update-source Tunnel64
+ neighbor FC00::10:29:32:29 remote-as 65512
+ !
+ address-family ipv4
+  no neighbor FC00::10:20:41:41 activate
+  no neighbor FC00::10:29:32:29 activate
+ exit-address-family
+ !
+ address-family ipv6
+  neighbor FC00::10:20:41:41 activate
+  neighbor FC00::10:20:41:41 next-hop-self
+  neighbor FC00::10:29:32:29 activate
+ exit-address-family
+!

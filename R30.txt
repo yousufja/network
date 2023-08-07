@@ -1,0 +1,94 @@
+!
+hostname R30
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+mpls label range 3000 3099
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no shutdown
+ ip address 192.168.30.30 255.255.255.255
+ ip ospf 1 area 0
+!
+interface Ethernet0/0
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/1
+ no shutdown
+ no ip address
+!
+interface Ethernet0/1.2130
+ no shutdown
+ encapsulation dot1Q 2130
+ ip address 10.21.30.30 255.255.255.0
+ ip ospf prefix-suppression
+ ip ospf 1 area 0
+!
+interface Ethernet0/1.3041
+ no shutdown
+ encapsulation dot1Q 3041
+ ip address 10.30.41.30 255.255.255.0
+ ip ospf prefix-suppression
+ ip ospf 1 area 0
+!
+interface Ethernet0/2
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no shutdown
+ no ip address
+ shutdown
+!
+router ospf 1
+ mpls ldp sync
+ mpls ldp autoconfig
+!

@@ -1,0 +1,144 @@
+!
+hostname R29
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+crypto isakmp policy 10
+ encr aes 192
+ hash sha256
+ authentication pre-share
+ group 14
+crypto isakmp key cisco address ipv6 ::/0
+crypto isakmp invalid-spi-recovery
+!
+!
+crypto ipsec transform-set ESP_AES_SHA256_HMAC esp-aes esp-sha256-hmac 
+ mode transport
+!
+crypto ipsec profile IPSEC_PROFILE
+ set transform-set ESP_AES_SHA256_HMAC 
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no shutdown
+ ip address 192.168.29.29 255.255.255.255
+ ip ospf 1 area 0
+ ipv6 address 192:168:29:29::/128
+!
+interface Tunnel0
+ no shutdown
+ ip address 172.16.1.29 255.255.255.0
+ ip mtu 1400
+ ip nhrp authentication cisco
+ ip nhrp map multicast dynamic
+ ip nhrp network-id 1
+ ip nhrp shortcut
+ ip nhrp redirect
+ ip tcp adjust-mss 1360
+ ip ospf network broadcast
+ ip ospf priority 255
+ ip ospf 1 area 0
+ tunnel source 192:168:29:29::
+ tunnel mode gre multipoint ipv6
+ tunnel key 1000
+ tunnel protection ipsec profile IPSEC_PROFILE
+!
+interface Ethernet0/0
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/1
+ no shutdown
+ no ip address
+!
+interface Ethernet0/1.2029
+ no shutdown
+ encapsulation dot1Q 2029
+ ipv6 address FC00::10:20:29:29/112
+!
+interface Ethernet0/1.2931
+ no shutdown
+ encapsulation dot1Q 2931
+ ipv6 address FC00::10:29:31:29/112
+!
+interface Ethernet0/1.2932
+ no shutdown
+ encapsulation dot1Q 2932
+ ipv6 address FC00::10:29:32:29/112
+!
+interface Ethernet0/2
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no shutdown
+ no ip address
+ shutdown
+!
+router ospf 1
+!
+router bgp 65512
+ bgp log-neighbor-changes
+ neighbor FC00::10:29:31:31 remote-as 65512
+ neighbor FC00::10:29:32:32 remote-as 65522
+ !
+ address-family ipv4
+  no neighbor FC00::10:29:31:31 activate
+  no neighbor FC00::10:29:32:32 activate
+ exit-address-family
+ !
+ address-family ipv6
+  network 192:168:29:29::/128
+  neighbor FC00::10:29:31:31 activate
+  neighbor FC00::10:29:31:31 next-hop-self
+  neighbor FC00::10:29:32:32 activate
+  neighbor FC00::10:29:32:32 allowas-in 10
+ exit-address-family
+!

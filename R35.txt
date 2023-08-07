@@ -1,0 +1,109 @@
+hostname R35
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no shutdown
+ ip address 192.168.35.35 255.255.255.255
+!
+interface Ethernet0/0
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/1
+ no shutdown
+ no ip address
+!
+interface Ethernet0/1.3435
+ no shutdown
+ encapsulation dot1Q 3435
+ ipv6 address FC00::10:34:35:35/112
+!
+interface Ethernet0/1.3536
+ no shutdown
+ encapsulation dot1Q 3536
+ ipv6 address FC00::10:35:36:35/112
+!
+interface Ethernet0/1.3538
+ no shutdown
+ encapsulation dot1Q 3538
+ ipv6 address FC00::10:35:38:35/112
+!
+interface Ethernet0/2
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no shutdown
+ no ip address
+ shutdown
+!
+router bgp 65525
+ bgp router-id 192.168.35.35
+ bgp log-neighbor-changes
+ neighbor FC00::10:34:35:34 remote-as 65524
+ neighbor FC00::10:35:36:36 remote-as 65526
+ neighbor FC00::10:35:38:38 remote-as 65512
+ !
+ address-family ipv4
+  no neighbor FC00::10:34:35:34 activate
+  no neighbor FC00::10:35:36:36 activate
+  no neighbor FC00::10:35:38:38 activate
+ exit-address-family
+ !
+ address-family ipv6
+  neighbor FC00::10:34:35:34 activate
+  neighbor FC00::10:35:36:36 activate
+  neighbor FC00::10:35:38:38 activate
+ exit-address-family
+!

@@ -1,0 +1,94 @@
+hostname R9
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no shutdown
+ ip address 192.168.9.9 255.255.255.255
+ ip ospf 1 area 3
+!
+interface Ethernet0/0
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/1
+ no shutdown
+ no ip address
+!
+interface Ethernet0/1.39
+ no shutdown
+ encapsulation dot1Q 39
+ ip address 10.3.9.9 255.255.255.0
+ ip ospf network point-to-point
+ ip ospf prefix-suppression
+ ip ospf 1 area 3
+!
+interface Ethernet0/1.910
+ no shutdown
+ encapsulation dot1Q 910
+ ip address 10.9.10.9 255.255.255.0
+ ip ospf network point-to-point
+ ip ospf prefix-suppression
+ ip ospf 1 area 3
+!
+interface Ethernet0/2
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no shutdown
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 192.168.9.9
+ area 3 nssa
+!

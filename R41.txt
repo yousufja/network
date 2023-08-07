@@ -1,0 +1,156 @@
+!
+hostname R41
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+mpls label range 4100 4199
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no shutdown
+ ip address 192.168.41.41 255.255.255.255
+ ip ospf 1 area 0
+!
+interface Tunnel64
+ no shutdown
+ no ip address
+ no ip redirects
+ ipv6 address FC00::10:20:41:41/112
+ ipv6 nhrp authentication cisco
+ ipv6 nhrp map multicast dynamic
+ ipv6 nhrp network-id 1
+ ipv6 nhrp shortcut
+ ipv6 nhrp redirect
+ tunnel source Loopback0
+ tunnel mode gre multipoint
+ tunnel key 1000
+!
+interface Ethernet0/0
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/1
+ no shutdown
+ no ip address
+!
+interface Ethernet0/1.2841
+ no shutdown
+ encapsulation dot1Q 2841
+ ip address 10.28.41.41 255.255.255.0
+ ip ospf network point-to-point
+ ip ospf prefix-suppression
+ ip ospf 1 area 0
+!
+interface Ethernet0/1.3041
+ no shutdown
+ encapsulation dot1Q 3041
+ ip address 10.30.41.41 255.255.255.0
+ ip ospf prefix-suppression
+ ip ospf 1 area 0
+!
+interface Ethernet0/2
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no shutdown
+ no ip address
+ shutdown
+!
+router ospf 1
+ mpls ldp sync
+ mpls ldp autoconfig
+!
+router bgp 65522
+ template peer-policy RR
+  route-reflector-client
+ exit-peer-policy
+ !
+ template peer-session RR
+  remote-as 65522
+  update-source Tunnel64
+ exit-peer-session
+ !
+ bgp router-id 192.168.41.41
+ bgp log-neighbor-changes
+ neighbor FC00::10:20:41:21 inherit peer-session RR
+ neighbor FC00::10:20:41:22 inherit peer-session RR
+ neighbor FC00::10:20:41:24 inherit peer-session RR
+ neighbor FC00::10:20:41:25 inherit peer-session RR
+ neighbor FC00::10:20:41:27 inherit peer-session RR
+ neighbor FC00::10:20:41:32 inherit peer-session RR
+ !
+ address-family ipv4
+  no neighbor FC00::10:20:41:21 activate
+  no neighbor FC00::10:20:41:22 activate
+  no neighbor FC00::10:20:41:24 activate
+  no neighbor FC00::10:20:41:25 activate
+  no neighbor FC00::10:20:41:27 activate
+  no neighbor FC00::10:20:41:32 activate
+ exit-address-family
+ !
+ address-family ipv6
+  neighbor FC00::10:20:41:21 activate
+  neighbor FC00::10:20:41:21 inherit peer-policy RR
+  neighbor FC00::10:20:41:22 activate
+  neighbor FC00::10:20:41:22 inherit peer-policy RR
+  neighbor FC00::10:20:41:24 activate
+  neighbor FC00::10:20:41:24 inherit peer-policy RR
+  neighbor FC00::10:20:41:25 activate
+  neighbor FC00::10:20:41:25 inherit peer-policy RR
+  neighbor FC00::10:20:41:27 activate
+  neighbor FC00::10:20:41:27 inherit peer-policy RR
+  neighbor FC00::10:20:41:32 activate
+  neighbor FC00::10:20:41:32 inherit peer-policy RR
+ exit-address-family
+!

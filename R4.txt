@@ -1,0 +1,173 @@
+hostname R4
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+crypto isakmp policy 10
+ encr aes 192
+ hash sha256
+ authentication pre-share
+ group 14
+crypto isakmp key cisco address ipv6 ::/0
+!
+!
+crypto ipsec transform-set ESP_AES_SHA256_HMAC esp-aes 
+ mode transport
+!
+crypto ipsec profile IPSEC_PROFILE
+ set transform-set ESP_AES_SHA256_HMAC 
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no shutdown
+ ip address 192.168.4.4 255.255.255.255
+ ip ospf 1 area 0
+ ipv6 address 192:168:4:4::/128
+!
+interface Tunnel0
+ no shutdown
+ ip address 172.16.1.4 255.255.255.0
+ ip mtu 1400
+ ip nhrp authentication cisco
+ ip nhrp map 172.16.1.29 192:168:29:29::
+ ip nhrp map multicast 192:168:29:29::
+ ip nhrp network-id 1
+ ip nhrp nhs 172.16.1.29
+ ip nhrp shortcut
+ ip tcp adjust-mss 1360
+ ip ospf network broadcast
+ ip ospf priority 0
+ ip ospf 1 area 0
+ tunnel source Loopback0
+ tunnel mode gre multipoint ipv6
+ tunnel key 1000
+ tunnel protection ipsec profile IPSEC_PROFILE
+!
+interface Ethernet0/0
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/1
+ no shutdown
+ no ip address
+!
+interface Ethernet0/1.411
+ no shutdown
+ encapsulation dot1Q 411
+ ip address 10.4.11.4 255.255.255.0
+ ip ospf network point-to-point
+ ip ospf prefix-suppression
+ ip ospf 1 area 4
+!
+interface Ethernet0/1.421
+ no shutdown
+ encapsulation dot1Q 421
+ ipv6 address FC00::10:4:21:4/112
+!
+interface Ethernet0/1.1234
+ no shutdown
+ encapsulation dot1Q 1234
+ ip address 10.12.34.4 255.255.255.0
+ ip ospf network broadcast
+ ip ospf prefix-suppression
+ ipv6 address FC00::10:12:34:4/112
+!
+interface Ethernet0/2
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no shutdown
+ no ip address
+ shutdown
+!
+router ospf 1
+ area 4 nssa default-information-originate no-summary
+ network 10.12.34.0 0.0.0.255 area 0
+!
+router bgp 65512
+ bgp router-id 192.168.4.4
+ bgp log-neighbor-changes
+ neighbor FC00::10:4:21:21 remote-as 65522
+ neighbor FC00::10:12:34:1 remote-as 65512
+ neighbor FC00::10:12:34:1 update-source Ethernet0/1.1234
+ neighbor FC00::10:12:34:2 remote-as 65512
+ neighbor FC00::10:12:34:2 update-source Ethernet0/1.1234
+ neighbor FC00::10:12:34:3 remote-as 65512
+ neighbor FC00::10:12:34:3 update-source Ethernet0/1.1234
+ neighbor FC00::172:16:1:29 remote-as 65512
+ !
+ address-family ipv4
+  no neighbor FC00::10:4:21:21 activate
+  no neighbor FC00::10:12:34:1 activate
+  no neighbor FC00::10:12:34:2 activate
+  no neighbor FC00::10:12:34:3 activate
+  neighbor FC00::172:16:1:29 activate
+ exit-address-family
+ !
+ address-family ipv6
+  network 192:168:4:4::/128
+  network 2002:C0A8:404::/128
+  neighbor FC00::10:4:21:21 activate
+  neighbor FC00::10:4:21:21 allowas-in 10
+  neighbor FC00::10:12:34:1 activate
+  neighbor FC00::10:12:34:1 route-reflector-client
+  neighbor FC00::10:12:34:1 next-hop-self
+  neighbor FC00::10:12:34:2 activate
+  neighbor FC00::10:12:34:2 route-reflector-client
+  neighbor FC00::10:12:34:2 next-hop-self
+  neighbor FC00::10:12:34:3 activate
+  neighbor FC00::10:12:34:3 route-reflector-client
+  neighbor FC00::10:12:34:3 next-hop-self
+  neighbor FC00::172:16:1:29 activate
+ exit-address-family
+!

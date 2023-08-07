@@ -1,0 +1,126 @@
+!
+hostname R10
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no shutdown
+ ip address 192.168.10.10 255.255.255.255
+ ip ospf 1 area 3
+!
+interface Ethernet0/0
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/1
+ no shutdown
+ no ip address
+!
+interface Ethernet0/1.910
+ no shutdown
+ encapsulation dot1Q 910
+ ip address 10.9.10.10 255.255.255.0
+ ip ospf network point-to-point
+ ip ospf prefix-suppression
+ ip ospf 1 area 3
+!
+interface Ethernet0/1.1016
+ no shutdown
+ encapsulation dot1Q 1016
+ ip address 10.10.16.10 255.255.255.0
+ ip rip send version 2
+ ip rip receive version 2
+!
+interface Ethernet0/2
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no shutdown
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 192.168.10.10
+ area 3 nssa
+ redistribute rip metric 1 subnets route-map RIP_TO_OSPF
+!
+router rip
+ version 2
+ redistribute ospf 1 metric 1
+ network 10.0.0.0
+ distribute-list OSPF_TO_RIP out
+ distribute-list RIP_TO_OSPF in
+ no auto-summary
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+ip access-list standard OSPF_TO_RIP
+ deny   10.9.10.0 0.0.0.255
+ permit any
+ip access-list standard RIP_TO_OSPF
+ deny   10.10.16.0 0.0.0.255
+ permit any
+!
+!
+route-map RIP_TO_OSPF permit 10
+ match ip address RIP_TO_OSPF
+!
+route-map OSPF_TO_RIP permit 10
+ match ip address OSPF_TO_RIP
+!
+!

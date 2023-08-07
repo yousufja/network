@@ -1,0 +1,117 @@
+!
+hostname R20
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no shutdown
+ ip address 192.168.20.20 255.255.255.255
+ ipv6 address FC00::192:168:20:20/128
+ ipv6 ospf 1 area 0
+!
+interface Ethernet0/0
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/1
+ no shutdown
+ no ip address
+!
+interface Ethernet0/1.1820
+ no shutdown
+ encapsulation dot1Q 1820
+ ipv6 address FC00::10:18:20:20/112
+ ipv6 ospf 1 area 0
+ ipv6 ospf network point-to-point
+ ipv6 ospf prefix-suppression
+!
+interface Ethernet0/1.2024
+ no shutdown
+ encapsulation dot1Q 2024
+ ipv6 address FC00::10:20:24:20/112
+!
+interface Ethernet0/2
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no shutdown
+ no ip address
+ shutdown
+!
+router ospfv3 1
+ router-id 192.168.20.20
+ !
+ address-family ipv6 unicast
+ exit-address-family
+!
+router ospf 1
+!
+router bgp 65521
+ bgp router-id 192.168.20.20
+ bgp log-neighbor-changes
+ neighbor FC00::10:20:24:24 remote-as 65522
+ neighbor FC00::192:168:18:18 remote-as 65521
+ neighbor FC00::192:168:18:18 update-source Loopback0
+ neighbor FC00::192:168:19:19 remote-as 65521
+ neighbor FC00::192:168:19:19 update-source Loopback0
+ !
+ address-family ipv4
+  no neighbor FC00::10:20:24:24 activate
+  no neighbor FC00::192:168:18:18 activate
+  no neighbor FC00::192:168:19:19 activate
+ exit-address-family
+ !
+ address-family ipv6
+  neighbor FC00::10:20:24:24 activate
+  neighbor FC00::192:168:18:18 activate
+  neighbor FC00::192:168:18:18 next-hop-self
+  neighbor FC00::192:168:19:19 activate
+  neighbor FC00::192:168:19:19 next-hop-self
+ exit-address-family
+!

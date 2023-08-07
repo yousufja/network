@@ -1,0 +1,96 @@
+!
+hostname R8
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no shutdown
+ ip address 192.168.8.8 255.255.255.255
+ ip ospf 1 area 6
+!
+interface Ethernet0/0
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/1
+ no shutdown
+ no ip address
+!
+interface Ethernet0/1.78
+ no shutdown
+ encapsulation dot1Q 78
+ ip address 10.7.8.8 255.255.255.0
+ ip ospf network point-to-point
+ ip ospf prefix-suppression disable
+ ip ospf 1 area 2
+!
+interface Ethernet0/1.815
+ no shutdown
+ encapsulation dot1Q 815
+ ip address 10.8.15.8 255.255.255.0
+ ip ospf network point-to-point
+ ip ospf prefix-suppression
+ ip ospf 1 area 6
+!
+interface Ethernet0/2
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no shutdown
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 192.168.8.8
+ area 2 virtual-link 192.168.2.2
+!

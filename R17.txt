@@ -1,0 +1,89 @@
+
+!
+hostname R17
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ no shutdown
+ ip address 192.168.17.17 255.255.255.255
+!
+interface Ethernet0/0
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/1
+ no shutdown
+ no ip address
+!
+interface Ethernet0/1.1217
+ no shutdown
+ encapsulation dot1Q 1217
+ ip address 10.12.17.17 255.255.255.0
+ ip rip send version 2
+ ip rip receive version 2
+!
+interface Ethernet0/2
+ no shutdown
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no shutdown
+ no ip address
+ shutdown
+!
+router rip
+ version 2
+ network 10.0.0.0
+ network 192.168.17.0
+ no auto-summary
+!
