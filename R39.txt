@@ -21,6 +21,7 @@ hostname R39
 !
 !
 !
+!
 no ip domain lookup
 ip cef
 ipv6 unicast-routing
@@ -50,7 +51,7 @@ crypto isakmp policy 10
 crypto isakmp key cisco address ipv6 ::/0
 !
 !
-crypto ipsec transform-set ESP_AES_SHA256_HMAC esp-aes 
+crypto ipsec transform-set ESP_AES_SHA256_HMAC esp-aes esp-sha256-hmac 
  mode transport
 !
 crypto ipsec profile IPSEC_PROFILE
@@ -112,6 +113,8 @@ interface Ethernet0/3
  shutdown
 !
 router ospf 1
+ router-id 192.168.39.39
+ distribute-list prefix FILTER_10 in
 !
 router bgp 65512
  bgp router-id 192.168.39.39
@@ -127,4 +130,10 @@ router bgp 65512
   neighbor FC00::10:33:39:33 activate
   neighbor FC00::10:33:39:33 allowas-in
  exit-address-family
+!
+!
+!
+ip prefix-list FILTER_10 seq 5 permit 192.168.0.0/16 le 32
+!
+!
 !

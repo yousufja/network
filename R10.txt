@@ -20,8 +20,6 @@ hostname R10
 !
 !
 !
-!
-!
 no ip domain lookup
 ip cef
 no ipv6 cef
@@ -93,14 +91,13 @@ interface Ethernet0/3
 router ospf 1
  router-id 192.168.10.10
  area 3 nssa
- redistribute rip metric 1 subnets route-map RIP_TO_OSPF
+ redistribute rip metric 1 subnets route-map DENY_10
 !
 router rip
  version 2
  redistribute ospf 1 metric 1
  network 10.0.0.0
- distribute-list OSPF_TO_RIP out
- distribute-list RIP_TO_OSPF in
+ distribute-list prefix FILTER_10 in
  no auto-summary
 !
 ip forward-protocol nd
@@ -110,12 +107,25 @@ no ip http server
 no ip http secure-server
 !
 ip access-list standard OSPF_TO_RIP
- deny   10.9.10.0 0.0.0.255
+ deny   10.0.0.0 0.255.255.255
+ permit any
+ip access-list standard PERMIT_ANY
  permit any
 ip access-list standard RIP_TO_OSPF
- deny   10.10.16.0 0.0.0.255
+ deny   10.0.0.0 0.255.255.255
  permit any
 !
+!
+ip prefix-list DENY_10 seq 5 permit 10.0.0.0/8 le 32
+!
+ip prefix-list FILTER_10 seq 5 deny 10.0.0.0/8 le 32
+ip prefix-list FILTER_10 seq 10 permit 0.0.0.0/0 le 32
+!
+route-map DENY_10 deny 10
+ match ip address prefix-list DENY_10
+!
+route-map DENY_10 permit 20
+ match ip address PERMIT_ANY
 !
 route-map RIP_TO_OSPF permit 10
  match ip address RIP_TO_OSPF

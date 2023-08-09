@@ -1,5 +1,7 @@
+
 !
 hostname R38
+!
 !
 !
 !
@@ -112,6 +114,8 @@ interface Ethernet0/3
  shutdown
 !
 router ospf 1
+ router-id 192.168.38.38
+ distribute-list prefix FILTER_10 in
 !
 router bgp 65512
  bgp router-id 192.168.38.38
@@ -127,4 +131,10 @@ router bgp 65512
   neighbor FC00::10:35:38:35 activate
   neighbor FC00::10:35:38:35 allowas-in
  exit-address-family
+!
+!
+!
+ip prefix-list FILTER_10 seq 5 permit 192.168.0.0/16 le 32
+!
+!
 !

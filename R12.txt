@@ -1,7 +1,6 @@
+
+!
 hostname R12
-!
-!
-!
 !
 !
 !
@@ -90,15 +89,15 @@ interface Ethernet0/3
  shutdown
 !
 router ospf 1
+ router-id 192.168.12.12
  area 4 nssa
- redistribute rip metric 1 subnets route-map RIP_TO_OSPF
+ redistribute rip metric 1 subnets route-map DENY_10
 !
 router rip
  version 2
  redistribute ospf 1 metric 1
  network 10.0.0.0
- distribute-list OSPF_TO_RIP out
- distribute-list RIP_TO_OSPF in
+ distribute-list prefix FILTER_10 in
  no auto-summary
 !
 ip forward-protocol nd
@@ -108,14 +107,24 @@ no ip http server
 no ip http secure-server
 !
 ip access-list standard OSPF_TO_RIP
- deny   10.11.12.0 0.0.0.255
- permit any
+ permit 192.168.0.0 0.0.255.255
 ip access-list standard RIP_TO_OSPF
- deny   10.12.17.0 0.0.0.255
- permit any
+ permit 192.168.0.0 0.0.255.255
 !
+!
+ip prefix-list DENY_10 seq 5 permit 10.0.0.0/8 le 32
+!
+ip prefix-list FILTER_10 seq 5 deny 10.0.0.0/8 le 32
+ip prefix-list FILTER_10 seq 10 permit 0.0.0.0/0 le 32
+!
+ip prefix-list PERMIT_ANY seq 5 permit 0.0.0.0/0 le 32
+!
+route-map DENY_10 deny 5
+ match ip address prefix-list DENY_10
+!
+route-map DENY_10 permit 10
+ match ip address prefix-list PERMIT_ANY
 !
 route-map RIP_TO_OSPF permit 10
  match ip address RIP_TO_OSPF
-!
 !

@@ -14,10 +14,43 @@ hostname R1
 !
 !
 !
+!
+!
+!
+!
+!
+!
+!
+!
 no ip domain lookup
 ip cef
 ipv6 unicast-routing
 ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
 !
 interface Loopback0
  no shutdown
@@ -63,6 +96,7 @@ interface Ethernet0/3
 router ospf 1
  router-id 192.168.1.1
  area 1 stub
+ distribute-list prefix FILTER_10 in
 !
 router bgp 65512
  bgp log-neighbor-changes
@@ -79,4 +113,8 @@ router bgp 65512
  address-family ipv6
   neighbor FC00::10:12:34:4 activate
  exit-address-family
+!
+!
+ip prefix-list FILTER_10 seq 5 permit 192.168.0.0/16 le 32
+!
 !

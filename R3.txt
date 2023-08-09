@@ -19,10 +19,12 @@ hostname R3
 !
 !
 !
+!
 no ip domain lookup
 ip cef
 ipv6 unicast-routing
 ipv6 cef
+!
 !
 !
 !
@@ -48,7 +50,7 @@ crypto isakmp policy 10
 crypto isakmp key cisco address ipv6 ::/0
 !
 !
-crypto ipsec transform-set ESP_AES_SHA256_HMAC esp-aes 
+crypto ipsec transform-set ESP_AES_SHA256_HMAC esp-aes esp-sha256-hmac 
  mode transport
 !
 crypto ipsec profile IPSEC_PROFILE
@@ -128,6 +130,7 @@ interface Ethernet0/3
 router ospf 1
  router-id 192.168.3.3
  area 3 nssa default-information-originate
+ distribute-list prefix FILTER_10 in
 !
 router bgp 65512
  bgp router-id 192.168.3.3
@@ -148,4 +151,8 @@ router bgp 65512
   neighbor FC00::10:12:34:4 activate
   neighbor FC00::10:12:34:4 next-hop-self
  exit-address-family
+!
+!
+!
+ip prefix-list FILTER_10 seq 5 permit 192.168.0.0/16 le 32
 !
