@@ -70,15 +70,6 @@ interface Ethernet0/1.1016
  ip rip send version 2
  ip rip receive version 2
 !
-interface Ethernet0/2
- no shutdown
- no ip address
- shutdown
-!
-interface Ethernet0/3
- no shutdown
- no ip address
- shutdown
 !
 router rip
  version 2

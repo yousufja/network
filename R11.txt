@@ -79,15 +79,6 @@ interface Ethernet0/1.1112
  ip ospf prefix-suppression
  ip ospf 1 area 4
 !
-interface Ethernet0/2
- no shutdown
- no ip address
- shutdown
-!
-interface Ethernet0/3
- no shutdown
- no ip address
- shutdown
 !
 router ospf 1
  router-id 192.168.11.11

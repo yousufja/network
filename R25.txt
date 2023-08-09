@@ -1,10 +1,9 @@
-
 !
 hostname R25
 !
 !
 !
-!
+no aaa new-model
 !
 !
 !
@@ -87,6 +86,7 @@ interface Ethernet0/1.2125
  no shutdown
  encapsulation dot1Q 2125
  ip address 10.21.25.25 255.255.255.0
+ ip ospf network point-to-point
  ip ospf prefix-suppression
  ip ospf 1 area 0
 !
@@ -94,18 +94,10 @@ interface Ethernet0/1.2526
  no shutdown
  encapsulation dot1Q 2526
  ip address 10.25.26.25 255.255.255.0
+ ip ospf network point-to-point
  ip ospf prefix-suppression
  ip ospf 1 area 0
 !
-interface Ethernet0/2
- no shutdown
- no ip address
- shutdown
-!
-interface Ethernet0/3
- no shutdown
- no ip address
- shutdown
 !
 router ospf 1
  mpls ldp sync

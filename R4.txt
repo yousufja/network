@@ -18,9 +18,6 @@ hostname R4
 !
 !
 !
-!
-!
-!
 no ip domain lookup
 ip cef
 ipv6 unicast-routing
@@ -110,6 +107,7 @@ interface Ethernet0/1.411
 interface Ethernet0/1.421
  no shutdown
  encapsulation dot1Q 421
+ ip address 10.4.21.4 255.255.255.0
  ipv6 address FC00::10:4:21:4/112
 !
 interface Ethernet0/1.1234
@@ -120,17 +118,9 @@ interface Ethernet0/1.1234
  ip ospf prefix-suppression
  ipv6 address FC00::10:12:34:4/112
 !
-interface Ethernet0/2
- no shutdown
- no ip address
- shutdown
-!
-interface Ethernet0/3
- no shutdown
- no ip address
- shutdown
 !
 router ospf 1
+ router-id 192.168.4.4
  area 4 nssa default-information-originate no-summary
  network 10.12.34.0 0.0.0.255 area 0
  distribute-list prefix FILTER_10 in
@@ -138,6 +128,7 @@ router ospf 1
 router bgp 65512
  bgp router-id 192.168.4.4
  bgp log-neighbor-changes
+ neighbor 10.4.21.21 remote-as 65522
  neighbor FC00::10:4:21:21 remote-as 65522
  neighbor FC00::10:12:34:1 remote-as 65512
  neighbor FC00::10:12:34:1 update-source Ethernet0/1.1234
@@ -148,6 +139,7 @@ router bgp 65512
  neighbor FC00::172:16:1:29 remote-as 65512
  !
  address-family ipv4
+  neighbor 10.4.21.21 activate
   no neighbor FC00::10:4:21:21 activate
   no neighbor FC00::10:12:34:1 activate
   no neighbor FC00::10:12:34:2 activate
@@ -173,8 +165,5 @@ router bgp 65512
  exit-address-family
 !
 !
-!
 ip prefix-list FILTER_10 seq 5 permit 192.168.0.0/16 le 32
-!
-!
 !

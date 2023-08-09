@@ -82,15 +82,6 @@ interface Ethernet0/1.1922
  encapsulation dot1Q 1922
  ipv6 address FC00::10:19:22:19/112
 !
-interface Ethernet0/2
- no shutdown
- no ip address
- shutdown
-!
-interface Ethernet0/3
- no shutdown
- no ip address
- shutdown
 !
 router ospfv3 1
  router-id 192.168.19.19

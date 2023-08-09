@@ -20,7 +20,6 @@ hostname R29
 !
 !
 !
-!
 no ip domain lookup
 ip cef
 ipv6 unicast-routing
@@ -110,26 +109,22 @@ interface Ethernet0/1.2931
 interface Ethernet0/1.2932
  no shutdown
  encapsulation dot1Q 2932
+ ip address 10.29.32.29 255.255.255.0
  ipv6 address FC00::10:29:32:29/112
 !
-interface Ethernet0/2
- no shutdown
- no ip address
- shutdown
-!
-interface Ethernet0/3
- no shutdown
- no ip address
- shutdown
 !
 router ospf 1
+ router-id 192.168.29.29
+ distribute-list prefix FILTER_10 in
 !
 router bgp 65512
  bgp log-neighbor-changes
+ neighbor 10.29.32.32 remote-as 65522
  neighbor FC00::10:29:31:31 remote-as 65512
  neighbor FC00::10:29:32:32 remote-as 65522
  !
  address-family ipv4
+  neighbor 10.29.32.32 activate
   no neighbor FC00::10:29:31:31 activate
   no neighbor FC00::10:29:32:32 activate
  exit-address-family
@@ -142,3 +137,8 @@ router bgp 65512
   neighbor FC00::10:29:32:32 allowas-in 10
  exit-address-family
 !
+!
+!
+ip prefix-list FILTER_10 seq 5 permit 192.168.0.0/16 le 32
+!
+

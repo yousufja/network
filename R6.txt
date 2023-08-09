@@ -101,15 +101,6 @@ interface Ethernet0/1.637
  encapsulation dot1Q 637
  ipv6 address FC00::10:6:37:6/112
 !
-interface Ethernet0/2
- no shutdown
- no ip address
- shutdown
-!
-interface Ethernet0/3
- no shutdown
- no ip address
- shutdown
 !
 router ospf 1
  router-id 192.168.6.6

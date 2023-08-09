@@ -83,16 +83,6 @@ interface Ethernet0/1.1234
  ip ospf 1 area 0
  ipv6 address FC00::10:12:34:1/112
 !
-interface Ethernet0/2
- no shutdown
- no ip address
- shutdown
-!
-interface Ethernet0/3
- no shutdown
- no ip address
- shutdown
-!
 router ospf 1
  router-id 192.168.1.1
  area 1 stub

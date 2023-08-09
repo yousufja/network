@@ -20,8 +20,6 @@ hostname R21
 !
 !
 !
-!
-!
 no ip domain lookup
 ip cef
 ipv6 unicast-routing
@@ -90,6 +88,7 @@ interface Ethernet0/1
 interface Ethernet0/1.421
  no shutdown
  encapsulation dot1Q 421
+ ip address 10.4.21.21 255.255.255.0
  ipv6 address FC00::10:4:21:21/112
 !
 interface Ethernet0/1.431
@@ -106,24 +105,17 @@ interface Ethernet0/1.2125
  no shutdown
  encapsulation dot1Q 2125
  ip address 10.21.25.21 255.255.255.0
+ ip ospf network point-to-point
  ip ospf prefix-suppression
 !
 interface Ethernet0/1.2130
  no shutdown
  encapsulation dot1Q 2130
  ip address 10.21.30.21 255.255.255.0
+ ip ospf network point-to-point
  ip ospf prefix-suppression
  ip ospf 1 area 0
 !
-interface Ethernet0/2
- no shutdown
- no ip address
- shutdown
-!
-interface Ethernet0/3
- no shutdown
- no ip address
- shutdown
 !
 router ospf 1
  mpls ldp sync
@@ -135,11 +127,17 @@ router ospf 1
 router bgp 65522
  bgp router-id 192.168.21.21
  bgp log-neighbor-changes
+ neighbor 10.4.21.4 remote-as 65512
+ neighbor 192.168.32.32 remote-as 65522
+ neighbor 192.168.32.32 update-source Loopback0
  neighbor FC00::10:4:21:4 remote-as 65512
  neighbor FC00::10:20:41:41 remote-as 65522
  neighbor FC00::10:20:41:41 update-source Tunnel64
  !
  address-family ipv4
+  network 10.4.21.0 mask 255.255.255.0
+  neighbor 10.4.21.4 activate
+  neighbor 192.168.32.32 activate
   no neighbor FC00::10:4:21:4 activate
   no neighbor FC00::10:20:41:41 activate
  exit-address-family

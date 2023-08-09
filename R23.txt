@@ -36,7 +36,6 @@ mpls label range 2300 2399
 !
 !
 !
-!
 ! 
 !
 !
@@ -68,6 +67,7 @@ interface Ethernet0/1.2223
  no shutdown
  encapsulation dot1Q 2223
  ip address 10.22.23.23 255.255.255.0
+ ip ospf network point-to-point
  ip ospf prefix-suppression
  ip ospf 1 area 0
 !
@@ -75,18 +75,10 @@ interface Ethernet0/1.2324
  no shutdown
  encapsulation dot1Q 2324
  ip address 10.23.24.23 255.255.255.0
+ ip ospf network point-to-point
  ip ospf prefix-suppression
  ip ospf 1 area 0
 !
-interface Ethernet0/2
- no shutdown
- no ip address
- shutdown
-!
-interface Ethernet0/3
- no shutdown
- no ip address
- shutdown
 !
 router ospf 1
  mpls ldp sync

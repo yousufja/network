@@ -84,15 +84,6 @@ interface Ethernet0/1.3637
  encapsulation dot1Q 3637
  ipv6 address FC00::10:36:37:36/112
 !
-interface Ethernet0/2
- no shutdown
- no ip address
- shutdown
-!
-interface Ethernet0/3
- no shutdown
- no ip address
- shutdown
 !
 router bgp 65526
  bgp router-id 192.168.36.36
